@@ -49,6 +49,15 @@ function generateToken() {
 app.use(cors());
 app.use(express.json());
 
+// Log all API requests
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString();
+  const method = req.method;
+  const url = req.originalUrl || req.url;
+  console.log(`[${timestamp}] ${method} ${url}`);
+  next();
+});
+
 // Extract video ID from various YouTube URL formats
 function extractVideoId(url) {
   const patterns = [
