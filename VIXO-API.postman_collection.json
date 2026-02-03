@@ -1,0 +1,96 @@
+{
+  "info": {
+    "name": "VIXO API",
+    "description": "YouTube download API - process URLs and get download links",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "downloadToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        },
+        "description": "Check if the API is running"
+      }
+    },
+    {
+      "name": "Process YouTube URL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const json = pm.response.json();",
+              "    if (json.success && json.downloadUrl) {",
+              "        const token = json.downloadUrl.split('/').pop();",
+              "        pm.collectionVariables.set('downloadToken', token);",
+              "    }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://www.youtube.com/watch?v=tPEE9ZwTmy0\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "process"]
+        },
+        "description": "Send a YouTube URL to get video info and download link. Replace the url in the body with your YouTube link."
+      }
+    },
+    {
+      "name": "Download Video",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/download/{{downloadToken}}?format=best",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "download", "{{downloadToken}}"],
+          "query": [
+            {
+              "key": "format",
+              "value": "best",
+              "description": "best, bestaudio, or formatId (e.g. 140, 248, 251)"
+            }
+          ]
+        },
+        "description": "Download the video. Add ?format=FORMAT_ID to pick quality (e.g. ?format=140 for 140p, ?format=bestaudio for audio only). Run 'Process YouTube URL' first."
+      }
+    }
+  ]
+}

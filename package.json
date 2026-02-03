@@ -1,0 +1,17 @@
+{
+  "name": "vixo-api",
+  "version": "1.0.0",
+  "description": "YouTube download API - process YouTube URLs and return download links",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["youtube", "download", "api"],
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "yt-dlp-wrap": "^2.3.12"
+  }
+}
